@@ -28,12 +28,12 @@ while [[ $# -gt 0 ]]; do
 
     run)
     shift
-    docker run -it --rm -v $(pwd):/app:cached --shm-size=2g get-namecheap-zone-file ./wrapper.sh $@
+    docker run -it --rm -v $(pwd):/app:cached --shm-size=2g --env-file=.env get-namecheap-zone-file ./wrapper.sh $@
     break
     ;;
 
     bash)
-    docker run -it --rm -v $(pwd):/app:cached --shm-size=2g get-namecheap-zone-file bash
+    docker run -it --rm -v $(pwd):/app:cached --shm-size=2g --env-file=.env get-namecheap-zone-file bash
     break
     ;;
 

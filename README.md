@@ -24,13 +24,20 @@ Uses Selenium + Firefox + Xvfb + Docker to login and scrape the DNS info.
     ./get-zone setup
     ```
 
-3. Run the script:
+3. Copy the `.env.example` file to `.env`, and optionally set your AWS credentials if you want to work with Route 53.
+
+    ```
+    cp .env.example .env
+    vi .env               # Optional: Replace the TODO values if you want to use Route 53
+    ```
+
+4. Run the script:
 
     ```
     ./get-zone run <namecheap_username> <namecheap_password> <domain>
     ```
 
-4. Cross-fingers you don't get CAPTCHA'd.
+5. Cross-fingers you don't get CAPTCHA'd.
 
 ## TODO
 
