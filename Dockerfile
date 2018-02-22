@@ -9,4 +9,8 @@ RUN sudo apt-get -qq update && \
 # Install selenium
 RUN sudo pip install selenium
 
+# Install cli53
+RUN sudo wget -O /usr/local/bin/cli53 https://github.com/barnybug/cli53/releases/download/0.8.12/cli53-linux-amd64 && \
+    sudo chmod +x /usr/local/bin/cli53
+
 CMD ["bash"]
