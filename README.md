@@ -1,13 +1,32 @@
+# get-namecheap-zone-file
+
 Tries to get your DNS Zone File from NameCheap. Uses Selenium + Firefox + Xvfb + Docker login and scrape the DNS info.
 
-## Usage:
+## Usage
 
-1) Build the docker container:
+1. Clone this repository:
 
-  `./get-zone setup`
+    ```
+    git clone git@github.com:facetdigital/get-namecheap-zone-file.git
+    ```
 
-2) Run the script:
+2. Build the docker container:
 
-  `./get-zone run <namecheap_username> <namecheap_password> <domain>`
+    ```
+    cd get-namecheap-zone-file
+    ./get-zone setup
+    ```
 
-3) Cross-fingers you don't get CAPTCHA'd.
+3. Run the script:
+
+    ```
+    ./get-zone run <namecheap_username> <namecheap_password> <domain>
+    ```
+
+4. Cross-fingers you don't get CAPTCHA'd.
+
+## Credits
+
+Orignal core script from:
+
+https://gist.github.com/judotens/151341f04b37ffeb5b59
