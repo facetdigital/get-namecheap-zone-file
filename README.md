@@ -32,6 +32,11 @@ Uses Selenium + Firefox + Xvfb + Docker to login and scrape the DNS info.
 
 4. Cross-fingers you don't get CAPTCHA'd.
 
+## TODO
+
+  * [ ] Make a Chrome Extension version of this you can run when already logged in.
+  * [ ] Make it call Route 53 API to upload zone file. One command to migrate from NameCheap to Route 53!
+
 ## Credits
 
 Orignal core script from:
