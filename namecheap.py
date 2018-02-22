@@ -67,6 +67,7 @@ def parse_dns_info(dns_info):
         if not active: continue
         new_value = value
         if tipe == 'MX': new_value = "%s %s" % (str(priority), str(value))
+        if tipe == 'TXT': new_value = "\"%s\"" % (str(value))
 
         items.append([host,ttl,"IN", tipe, new_value])
 
@@ -79,6 +80,7 @@ if __name__ == "__main__":
     print str(e)
     sys.exit("Usage: %s <namecheap_username> <namecheap_password> <domain_to_check>" % str(sys.argv[0]))
 
+  print "$ORIGIN %s." % (str(sys.argv[3]))
   zones = parse_dns_info(dns_info)
   for zone in zones:
     print "\t".join(zone)
