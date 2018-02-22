@@ -2,6 +2,11 @@
 
 Tries to get your DNS Zone File from NameCheap. Uses Selenium + Firefox + Xvfb + Docker login and scrape the DNS info.
 
+## Prerequisites
+
+  * Bash
+  * Docker
+
 ## Usage
 
 1. Clone this repository:
