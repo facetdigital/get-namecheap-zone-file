@@ -1,6 +1,8 @@
 # get-namecheap-zone-file
 
-Tries to get your DNS Zone File from NameCheap. Uses Selenium + Firefox + Xvfb + Docker login and scrape the DNS info.
+Tries to get your DNS Zone File from NameCheap.
+
+Uses Selenium + Firefox + Xvfb + Docker to login and scrape the DNS info.
 
 ## Prerequisites
 
