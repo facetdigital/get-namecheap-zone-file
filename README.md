@@ -4,6 +4,8 @@ Tries to get your DNS Zone File from NameCheap.
 
 Uses Selenium + Firefox + Xvfb + Docker to login and scrape the DNS info.
 
+Optional: includes tools and instructios to then create and import that zone to AWS Route 53.
+
 ## Prerequisites
 
   * Bash
