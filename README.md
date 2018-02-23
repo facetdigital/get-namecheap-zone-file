@@ -59,6 +59,10 @@ To create and import this zone file to Route 53:
     cli53 import example.com --file example.com.zone   # the file you saved your NameCheap zone data to
     ```
 
+For more info on `cli53`, see: https://github.com/barnybug/cli53
+
+This Docker image also has `dns_compare` installed, which can be used to compare your zone file against a server. Use it to compare your extracted NameCheap zone file to the NameCheap server to make sure it is the same. And then to the Route 53 nameserver - it should be the same too. That's how you know they are identical before you flip the switch at NameCheap to point to Route 53 nameservers. (ProTip: Set your NS record TTLs at NameCheap to be low before you start all this, then set them back up to be high in Route 53 after all is well.) For more info on `dns_compare` see: https://github.com/joemiller/dns_compare
+
 ## TODO
 
   * [ ] Make a Chrome Extension version of this you can run when already logged in.
