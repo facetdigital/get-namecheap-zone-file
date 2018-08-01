@@ -27,20 +27,21 @@ Optional: includes tools and instructios to then create and import that zone to 
     ./get-zone setup
     ```
 
-3. Copy the `.env.example` file to `.env`, and optionally set your AWS credentials if you want to work with Route 53.
+3. Optionally set your AWS credentials if you want to work with Route 53.
 
     ```
-    cp .env.example .env
     vi .env               # Optional: Replace the TODO values if you want to use Route 53
     ```
 
-4. Run the script:
+4. If you are using Docker on macOS, you need to set up file sharing for the project directory. Click the Docker icon > Preferences > File Sharing and add the full path of this project.
+
+5. Run the script:
 
     ```
     ./get-zone run <namecheap_username> <namecheap_password> <domain>
     ```
 
-5. Cross-fingers you don't get CAPTCHA'd.
+6. Cross-fingers you don't get CAPTCHA'd.
 
 
 ## Import Zone to Route 53

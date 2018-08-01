@@ -19,11 +19,12 @@ if [[ $# -lt 1 ]]; then
 fi
 
 while [[ $# -gt 0 ]]; do
-  param="$1" 
+  param="$1"
   case "$param" in
     setup)
     echo "Building get-namecheap-zone-file Docker container..."
     docker build . -t get-namecheap-zone-file
+    rsync -c .env.example .env
     ;;
 
     run)
