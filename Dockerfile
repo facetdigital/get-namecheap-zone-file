@@ -10,11 +10,11 @@ RUN sudo apt-get -qq update && \
 RUN sudo -H pip install selenium
 
 # Install dns_compare
-# RUN sudo -H pip install dnspython git+http://github.com/joemiller/dns_compare.git#egg=dns_compare
+RUN sudo -H pip install dnspython git+http://github.com/joemiller/dns_compare.git#egg=dns_compare
 
 # Install cli53
-# RUN sudo wget -O /usr/local/bin/cli53 https://github.com/barnybug/cli53/releases/download/0.8.12/cli53-linux-amd64 && \
-#    sudo chmod +x /usr/local/bin/cli53
+RUN sudo wget -O /usr/local/bin/cli53 https://github.com/barnybug/cli53/releases/download/0.8.12/cli53-linux-amd64 && \
+    sudo chmod +x /usr/local/bin/cli53
 
 RUN sudo apt-get -y autoremove
 
