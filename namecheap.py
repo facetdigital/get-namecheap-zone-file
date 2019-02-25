@@ -7,22 +7,39 @@
 #   * Add some narrative printouts
 #   * Wrap with Docker
 #
+
 try:
     from selenium import webdriver
     from selenium.webdriver.common.keys import Keys
     from selenium.common.exceptions import NoSuchElementException
+    from selenium.common.exceptions import TimeoutException
+    from selenium.webdriver.support.ui import WebDriverWait
+    from selenium.webdriver.support import expected_conditions as EC
+    from selenium.webdriver.common.by import By
 except:
     print "pip install selenium dulu"
 
-import time
 import json
+import sys
+import time
 
 def get_advanced_dns_info(username, password, domain):
+    loginform_timeout = 60
+
+    # stop firefox's new jsonview from breaking everything
+    fp = webdriver.FirefoxProfile()
+    fp.set_preference("devtools.jsonview.enabled", False)
+
     print "Requesting advanced DNS page..."
-    browser = webdriver.Firefox()
+    browser = webdriver.Firefox(firefox_profile=fp)
     browser.get('https://ap.www.namecheap.com/Domains/DomainControlPanel/%s/advancedns' % str(domain))
-    print "Sleep for 7 seconds to wait out the stupid anti-bot page..."
-    time.sleep(7)
+
+    try:
+        element_present = EC.presence_of_element_located((By.XPATH, "//fieldset[@class='loginForm']//input[@name='LoginPassword']"))
+        WebDriverWait(browser, loginform_timeout).until(element_present)
+    except TimeoutException:
+        print "Timed out waiting for correct page to load"
+        sys.exit(1)
 
     print "Filling out login form..."
     elem = browser.find_element_by_class_name("loginForm").find_element_by_name('LoginUserName')
@@ -39,7 +56,7 @@ def get_advanced_dns_info(username, password, domain):
       print "  Doh! There is a CAPTCHA. This is probably going to fail..."
     except NoSuchElementException:
       print "  Whew! There is no CAPTCHA. This might work..."
-    
+
     print "Trying to get the DNS info as JSON..."
     browser.get('https://ap.www.namecheap.com/Domains/dns/GetAdvancedDnsInfo?domainName=%s' % str(domain))
     isi = browser.find_element_by_tag_name('body').text
@@ -74,13 +91,14 @@ def parse_dns_info(dns_info):
     return items
 
 if __name__ == "__main__":
-  import sys
-  try: dns_info = get_advanced_dns_info(sys.argv[1], sys.argv[2], sys.argv[3])
-  except Exception, e:
-    print str(e)
-    sys.exit("Usage: %s <namecheap_username> <namecheap_password> <domain_to_check>" % str(sys.argv[0]))
+    try:
+        dns_info = get_advanced_dns_info(sys.argv[1], sys.argv[2], sys.argv[3])
+    except Exception, e:
+        print str(e)
+        sys.exit("Usage: %s <namecheap_username> <namecheap_password> <domain_to_check>" % str(sys.argv[0]))
 
-  print "$ORIGIN %s." % (str(sys.argv[3]))
-  zones = parse_dns_info(dns_info)
-  for zone in zones:
-    print "\t".join(zone)
+    print "$ORIGIN %s." % (str(sys.argv[3]))
+    zones = parse_dns_info(dns_info)
+
+    for zone in zones:
+        print "\t".join(zone)
