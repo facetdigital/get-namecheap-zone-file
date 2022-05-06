@@ -7,47 +7,70 @@
 #   * Add some narrative printouts
 #   * Wrap with Docker
 #
+
 try:
     from selenium import webdriver
     from selenium.webdriver.common.keys import Keys
     from selenium.common.exceptions import NoSuchElementException
+    from selenium.common.exceptions import TimeoutException
+    from selenium.webdriver.support.ui import WebDriverWait
+    from selenium.webdriver.support import expected_conditions as EC
+    from selenium.webdriver.common.by import By
 except:
     print "pip install selenium dulu"
 
-import time
 import json
+import sys
+import time
 
 def get_advanced_dns_info(username, password, domain):
-    print "Requesting advanced DNS page..."
-    browser = webdriver.Firefox()
+    loginform_timeout = 10
+
+    fp = webdriver.FirefoxProfile()
+    useragent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:101.0) Gecko/20100101 Firefox/101.0"
+    fp.set_preference("general.useragent.override", useragent)
+    fp.set_preference("devtools.jsonview.enabled", False)
+    options = webdriver.FirefoxOptions()
+    options.add_argument('--headless')
+
+    print "Starting headless browser"
+    browser = webdriver.Firefox(firefox_profile=fp, firefox_options=options)
+
+    print "Requesting Advanced DNS page"
     browser.get('https://ap.www.namecheap.com/Domains/DomainControlPanel/%s/advancedns' % str(domain))
-    print "Sleep for 7 seconds to wait out the stupid anti-bot page..."
-    time.sleep(7)
 
-    print "Filling out login form..."
+    try:
+        element_present = EC.presence_of_element_located((By.XPATH, "//fieldset[@class='loginForm']//input[@name='LoginPassword']"))
+        WebDriverWait(browser, loginform_timeout).until(element_present)
+    except TimeoutException:
+        print "Timed out waiting for correct page to load"
+        sys.exit(1)
+
+    print "Filling out login form"
     elem = browser.find_element_by_class_name("loginForm").find_element_by_name('LoginUserName')
-    elem.send_keys(str(username))
-
+    elem.value = str(username)
     elem = browser.find_element_by_class_name("loginForm").find_element_by_name('LoginPassword')
-    elem.send_keys(str(password) + Keys.RETURN)
-    print "Waiting 5 seconds for login to complete..."
+    elem.value = str(password)
+    elem.send_keys(Keys.RETURN)
     time.sleep(5)
 
-    print "Checking to see if there is a CAPTCHA..."
-    try:
-      checkbox = browser.find_element_by_class_name("recaptcha-checkbox-checkmark")
-      print "  Doh! There is a CAPTCHA. This is probably going to fail..."
-    except NoSuchElementException:
-      print "  Whew! There is no CAPTCHA. This might work..."
-    
-    print "Trying to get the DNS info as JSON..."
+    print "Filling out 2FA code"
+    two_factor_code = raw_input("2FA Code: ")
+    browser.get('https://www.namecheap.com/twofa/totp')
+    time.sleep(5)
+    elem = browser.find_element_by_xpath("//form[@class='gb-totp-form']//input")
+    elem.value = str(two_factor_code)
+    elem.send_keys(Keys.RETURN)
+    time.sleep(5)
+
+    print "Getting the DNS info as JSON"
     browser.get('https://ap.www.namecheap.com/Domains/dns/GetAdvancedDnsInfo?domainName=%s' % str(domain))
     isi = browser.find_element_by_tag_name('body').text
     browser.quit()
 
     js = json.loads(isi)
 
-    print "I think we are in the clear. Here is your DNS Zone File:\n\n"
+    print "Here is your DNS Zone File:\n\n"
     return js
 
 def parse_dns_info(dns_info):
@@ -74,13 +97,16 @@ def parse_dns_info(dns_info):
     return items
 
 if __name__ == "__main__":
-  import sys
-  try: dns_info = get_advanced_dns_info(sys.argv[1], sys.argv[2], sys.argv[3])
-  except Exception, e:
-    print str(e)
-    sys.exit("Usage: %s <namecheap_username> <namecheap_password> <domain_to_check>" % str(sys.argv[0]))
+    username = raw_input("Username: ")
+    password = raw_input("Password: ")
+    try:
+        dns_info = get_advanced_dns_info(username, password, sys.argv[1])
+    except Exception, e:
+        print str(e)
+        sys.exit("Usage: %s <domain_to_check>" % str(sys.argv[0]))
 
-  print "$ORIGIN %s." % (str(sys.argv[3]))
-  zones = parse_dns_info(dns_info)
-  for zone in zones:
-    print "\t".join(zone)
+    print "$ORIGIN %s." % (str(sys.argv[1]))
+    zones = parse_dns_info(dns_info)
+
+    for zone in zones:
+        print "\t".join(zone)
