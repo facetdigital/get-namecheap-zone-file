@@ -24,10 +24,14 @@ import sys
 import time
 
 def get_advanced_dns_info(username, password, domain):
-    loginform_timeout = 60
+    loginform_timeout = 10
 
     fp = webdriver.FirefoxProfile()
+    useragent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:101.0) Gecko/20100101 Firefox/101.0"
+    fp.set_preference("general.useragent.override", useragent)
     fp.set_preference("devtools.jsonview.enabled", False)
+    options = webdriver.FirefoxOptions()
+    options.add_argument('--headless')
 
     print "Starting headless browser"
     browser = webdriver.Firefox(firefox_profile=fp, firefox_options=options)
