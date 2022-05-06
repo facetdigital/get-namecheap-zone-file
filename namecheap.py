@@ -50,12 +50,14 @@ def get_advanced_dns_info(username, password, domain):
     elem.send_keys(Keys.RETURN)
     time.sleep(5)
 
-    print "Checking to see if there is a CAPTCHA..."
-    try:
-      checkbox = browser.find_element_by_class_name("recaptcha-checkbox-checkmark")
-      print "  Doh! There is a CAPTCHA. This is probably going to fail..."
-    except NoSuchElementException:
-      print "  Whew! There is no CAPTCHA. This might work..."
+    print "Filling out 2FA code"
+    two_factor_code = raw_input("2FA Code: ")
+    browser.get('https://www.namecheap.com/twofa/totp')
+    time.sleep(5)
+    elem = browser.find_element_by_xpath("//form[@class='gb-totp-form']//input")
+    elem.value = str(two_factor_code)
+    elem.send_keys(Keys.RETURN)
+    time.sleep(5)
 
     print "Getting the DNS info as JSON"
     browser.get('https://ap.www.namecheap.com/Domains/dns/GetAdvancedDnsInfo?domainName=%s' % str(domain))
