@@ -1,4 +1,4 @@
-FROM selenium/standalone-firefox
+FROM selenium/standalone-firefox:3.14.0
 WORKDIR /app
 
 # Install python, pip, xvfb
