@@ -30,8 +30,10 @@ def get_advanced_dns_info(username, password, domain):
     fp = webdriver.FirefoxProfile()
     fp.set_preference("devtools.jsonview.enabled", False)
 
-    print "Requesting advanced DNS page..."
-    browser = webdriver.Firefox(firefox_profile=fp)
+    print "Starting headless browser"
+    browser = webdriver.Firefox(firefox_profile=fp, firefox_options=options)
+
+    print "Requesting Advanced DNS page"
     browser.get('https://ap.www.namecheap.com/Domains/DomainControlPanel/%s/advancedns' % str(domain))
 
     try:
@@ -91,13 +93,15 @@ def parse_dns_info(dns_info):
     return items
 
 if __name__ == "__main__":
+    username = raw_input("Username: ")
+    password = raw_input("Password: ")
     try:
-        dns_info = get_advanced_dns_info(sys.argv[1], sys.argv[2], sys.argv[3])
+        dns_info = get_advanced_dns_info(username, password, sys.argv[1])
     except Exception, e:
         print str(e)
-        sys.exit("Usage: %s <namecheap_username> <namecheap_password> <domain_to_check>" % str(sys.argv[0]))
+        sys.exit("Usage: %s <domain_to_check>" % str(sys.argv[0]))
 
-    print "$ORIGIN %s." % (str(sys.argv[3]))
+    print "$ORIGIN %s." % (str(sys.argv[1]))
     zones = parse_dns_info(dns_info)
 
     for zone in zones:

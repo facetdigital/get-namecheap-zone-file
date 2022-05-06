@@ -7,7 +7,7 @@ if [[ $# -lt 1 ]]; then
   echo "Commands:"
   echo "  setup - Setup the necessary Docker container."
   echo
-  echo "  run <namecheap_username> <namecheap_password> <domain> - Run the script to get your NameCheap DNS Zone File."
+  echo "  run <domain> - Run the script to get your NameCheap DNS Zone File."
   echo
   echo "  bash - Run bash in the container environment."
   echo
@@ -21,28 +21,27 @@ fi
 while [[ $# -gt 0 ]]; do
   param="$1"
   case "$param" in
-    setup)
+  setup)
     echo "Building get-namecheap-zone-file Docker container..."
     docker build . -t get-namecheap-zone-file
     rsync -c .env.example .env
     ;;
 
-    run)
+  run)
     shift
     docker run -it --init --rm -v $(pwd):/app:cached --shm-size=2g --env-file=.env get-namecheap-zone-file ./wrapper.sh $@
     break
     ;;
 
-    bash)
+  bash)
     docker run -it --rm -v $(pwd):/app:cached --shm-size=2g --env-file=.env get-namecheap-zone-file bash
     break
     ;;
 
-    *)
+  *)
     echo "Unknown command: $param"
     break
     ;;
   esac
   shift
 done
-
