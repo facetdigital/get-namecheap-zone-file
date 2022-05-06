@@ -26,7 +26,6 @@ import time
 def get_advanced_dns_info(username, password, domain):
     loginform_timeout = 60
 
-    # stop firefox's new jsonview from breaking everything
     fp = webdriver.FirefoxProfile()
     fp.set_preference("devtools.jsonview.enabled", False)
 
@@ -43,13 +42,12 @@ def get_advanced_dns_info(username, password, domain):
         print "Timed out waiting for correct page to load"
         sys.exit(1)
 
-    print "Filling out login form..."
+    print "Filling out login form"
     elem = browser.find_element_by_class_name("loginForm").find_element_by_name('LoginUserName')
-    elem.send_keys(str(username))
-
+    elem.value = str(username)
     elem = browser.find_element_by_class_name("loginForm").find_element_by_name('LoginPassword')
-    elem.send_keys(str(password) + Keys.RETURN)
-    print "Waiting 5 seconds for login to complete..."
+    elem.value = str(password)
+    elem.send_keys(Keys.RETURN)
     time.sleep(5)
 
     print "Checking to see if there is a CAPTCHA..."
@@ -59,14 +57,14 @@ def get_advanced_dns_info(username, password, domain):
     except NoSuchElementException:
       print "  Whew! There is no CAPTCHA. This might work..."
 
-    print "Trying to get the DNS info as JSON..."
+    print "Getting the DNS info as JSON"
     browser.get('https://ap.www.namecheap.com/Domains/dns/GetAdvancedDnsInfo?domainName=%s' % str(domain))
     isi = browser.find_element_by_tag_name('body').text
     browser.quit()
 
     js = json.loads(isi)
 
-    print "I think we are in the clear. Here is your DNS Zone File:\n\n"
+    print "Here is your DNS Zone File:\n\n"
     return js
 
 def parse_dns_info(dns_info):
